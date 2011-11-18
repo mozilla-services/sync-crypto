@@ -1,0 +1,9 @@
+.metadata
+*~
+.*.sw?
+.sw?
+*.jar
+*.class
+target
+.project
+.classpath
