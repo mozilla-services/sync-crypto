@@ -37,8 +37,10 @@
 
 package org.mozilla.android.sync.crypto;
 
-import javax.crypto.Mac;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.Mac;
 
 public class KeyBundle {
 
@@ -49,6 +51,29 @@ public class KeyBundle {
     private static final byte[] EMPTY_BYTES      = {};
     private static final byte[] ENCR_INPUT_BYTES = {1};
     private static final byte[] HMAC_INPUT_BYTES = {2};
+
+    /**
+     * If we encounter characters not allowed by the API (as found for
+     * instance in an email address), hash the value.
+     * @param account
+     *        An account string.
+     * @return
+     *        An acceptable string.
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     */
+    public static String usernameFromAccount(String account) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+      if (account == null || account.equals("")) {
+        throw new IllegalArgumentException("No account name provided.");
+      }
+      if (account.matches("^[A-Za-z0-9._-]+$")) {
+        return account;
+      }
+      return Cryptographer.sha1Base32(account);
+    }
+
+    // If we encounter characters not allowed by the API (as found for
+    // instance in an email address), hash the value.
 
     /*
      * Mozilla's use of HKDF for getting keys from the Sync Key string.
@@ -64,6 +89,15 @@ public class KeyBundle {
       if (username == null || username.equals("")) {
         throw new IllegalArgumentException("No username provided.");
       }
+      // Hash appropriately.
+      try {
+        username = usernameFromAccount(username);
+      } catch (NoSuchAlgorithmException e) {
+        throw new IllegalArgumentException("Invalid username.");
+      } catch (UnsupportedEncodingException e) {
+        throw new IllegalArgumentException("Invalid username.");
+      }
+
       byte[] syncKey = Utils.decodeFriendlyBase32(base32SyncKey);
       byte[] user    = username.getBytes();
 
