@@ -19,7 +19,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Jason Voll
+ *  Jason Voll <jvoll@mozilla.com>
+ *  Richard Newman <rnewman@mozilla.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -41,6 +42,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
+
+import org.apache.commons.codec.binary.Base64;
 
 public class KeyBundle {
 
@@ -132,4 +135,8 @@ public class KeyBundle {
         this.hmacKey = hmacKey;
     }
 
+    public static KeyBundle decodeKeyStrings(String base64EncryptionKey, String base64HmacKey) throws UnsupportedEncodingException {
+      return new KeyBundle(Base64.decodeBase64(base64EncryptionKey.getBytes("UTF-8")),
+                           Base64.decodeBase64(base64HmacKey.getBytes("UTF-8")));
+    }
 }
