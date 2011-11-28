@@ -15,5 +15,7 @@ public class TestKeyBundleUsernames {
     assertEquals(Cryptographer.sha1Base32("foobar@baz.com"), "xee7ffonluzpdp66l6xgpyh2v2w6ojkc");
     assertEquals(KeyBundle.usernameFromAccount("foobar@baz.com"), "xee7ffonluzpdp66l6xgpyh2v2w6ojkc");
     assertEquals(KeyBundle.usernameFromAccount("foobar"), "foobar");
+    assertEquals(KeyBundle.usernameFromAccount("xee7ffonluzpdp66l6xgpyh2v2w6ojkc"), "xee7ffonluzpdp66l6xgpyh2v2w6ojkc");
+
   }
 }
