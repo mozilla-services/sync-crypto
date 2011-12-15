@@ -53,8 +53,19 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class HKDF {
 
+    /**
+     * Used for conversion in cases in which you *know* the encoding exists.
+     */
+    public static final byte[] bytes(String in) {
+      try {
+          return in.getBytes("UTF-8");
+      } catch (java.io.UnsupportedEncodingException e) {
+          return null;
+      }
+    }
+
     public static final int BLOCKSIZE     = 256 / 8;
-    public static final byte[] HMAC_INPUT = "Sync-AES_256_CBC-HMAC256".getBytes();
+    public static final byte[] HMAC_INPUT = bytes("Sync-AES_256_CBC-HMAC256");
 
     /*
      * Step 1 of RFC 5869
@@ -75,8 +86,8 @@ public class HKDF {
 
         Mac hmacHasher = makeHMACHasher(prk);
 
-        byte[] T  = "".getBytes();
-        byte[] Tn = "".getBytes();
+        byte[] T  = {};
+        byte[] Tn = {};
 
         int iterations = (int) Math.ceil(((double)len) / ((double)BLOCKSIZE));
         for (int i = 0; i < iterations; i++) {
