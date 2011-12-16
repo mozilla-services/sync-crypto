@@ -40,7 +40,6 @@ package org.mozilla.android.sync.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -72,8 +71,16 @@ public class Cryptographer {
     try {
       byte[] encryptionKey = info.getKeys().getEncryptionKey();
       SecretKeySpec spec = new SecretKeySpec(encryptionKey, KEY_ALGORITHM_SPEC);
-      cipher.init(Cipher.ENCRYPT_MODE, spec);
-    } catch (InvalidKeyException ex) {
+
+      // If no IV is provided, we allow the cipher to provide one.
+      if (info.getIV() == null ||
+          info.getIV().length == 0) {
+        cipher.init(Cipher.ENCRYPT_MODE, spec);
+      } else {
+        System.out.println("IV is " + info.getIV().length);
+        cipher.init(Cipher.ENCRYPT_MODE, spec, new IvParameterSpec(info.getIV()));
+      }
+    } catch (GeneralSecurityException ex) {
       ex.printStackTrace();
       throw new CryptoException(ex);
     }
