@@ -37,9 +37,11 @@
 
 package org.mozilla.android.sync.crypto;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.codec.binary.Base64;
 
 public class Utils {
 
@@ -119,5 +121,20 @@ public class Utils {
         Base32 converter = new Base32();
         return converter.decode(base32.replace('8', 'l').replace('9', 'o')
                 .toUpperCase());
+    }
+
+    /**
+     * Utility for Base64 decoding. Should ensure that the correct
+     * Apache Commons version is used.
+     *
+     * @param base64
+     *        An input string. Will be decoded as UTF-8.
+     * @return
+     *        A byte array of decoded values.
+     * @throws UnsupportedEncodingException
+     *         Should not occur.
+     */
+    public static byte[] decodeBase64(String base64) throws UnsupportedEncodingException {
+        return Base64.decodeBase64(base64.getBytes("UTF-8"));
     }
 }
